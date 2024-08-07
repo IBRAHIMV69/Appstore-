@@ -193,7 +193,7 @@
 
     function saveApp(app) {
         const apps = getApps();
-        apps.push(app);
+        apps.unshift(app);  // Add new app to the beginning
         localStorage.setItem('apps', JSON.stringify(apps));
     }
 
@@ -231,8 +231,7 @@
                 appDownloadLink.href = app.apk;
                 appDownloadLink.textContent = 'Download';
                 appDownloadLink.className = 'app-download-link';
-                appDownloadLink.download = `${app.title}.apk`;
-                appDownloadLink.target = '_blank';
+                appDownloadLink.download = app.apkName;
 
                 appDetails.appendChild(appTitle);
                 appDetails.appendChild(appDescription);
@@ -251,26 +250,36 @@
     function publishContent(event) {
         event.preventDefault();
         const title = document.getElementById('content-title').value;
-        const description = document.getElementById('content-body').value;
-        const logoInput = document.getElementById('content-cover');
-        const logoFile = logoInput.files[0];
         const apkInput = document.getElementById('content-apk');
-        const apkFile = apkInput.files[0];
+        const logoInput = document.getElementById('content-cover');
+        const description = document.getElementById('content-body').value;
 
-        if (logoFile && apkFile) {
-            const logoReader = new FileReader();
-            logoReader.onloadend = function() {
-                const logo = logoReader.result;
-                const apkReader = new FileReader();
-                apkReader.onloadend = function() {
-                    const apk = apkReader.result;
-                    const app = { title, description, logo, apk };
-                    saveApp(app);
-                    showApps();
+        const apkFile = apkInput.files[0];
+        const logoFile = logoInput.files[0];
+
+        const reader = new FileReader();
+
+        reader.onloadend = function() {
+            const apk = reader.result;
+            reader.onloadend = function() {
+                const logo = reader.result;
+                const app = { 
+                    title, 
+                    description, 
+                    logo, 
+                    apk, 
+                    apkName: apkFile.name 
                 };
-                apkReader.readAsDataURL(apkFile);
+                saveApp(app);
+                showApps();
             };
-            logoReader.readAsDataURL(logoFile);
+            if (logoFile) {
+                reader.readAsDataURL(logoFile);
+            }
+        };
+
+        if (apkFile) {
+            reader.readAsDataURL(apkFile);
         }
     }
 
