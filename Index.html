@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #ff6600;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        header h1 i {
+            margin-right: 10px;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .app-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .app-list-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            transition: transform 0.2s ease-in-out;
+        }
+        .app-list-item:hover {
+            transform: scale(1.02);
+        }
+        .app-list-item img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+        .app-details {
+            flex: 1;
+        }
+        .app-details h2 {
+            font-size: 1.2em;
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        .app-details p {
+            margin: 0 0 10px 0;
+            color: #666;
+        }
+        .app-download-link {
+            background-color: #ff6600;
+            color: #fff;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            font-size: 0.9em;
+        }
+        .app-download-link:hover {
+            background-color: #e65c00;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .content-form {
+            margin-top: 20px;
+        }
+        .content-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .content-form input, .content-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .content-form button {
+            background-color: #ff6600;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .content-form button:hover {
+            background-color: #e65c00;
+        }
+        .content-cover {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1><i class="fas fa-store"></i> App Store</h1>
+</header>
+
+<nav>
+    <a onclick="showApps()"><i class="fas fa-th"></i> Apps</a>
+    <a onclick="showContentForm()"><i class="fas fa-plus"></i> Publish App</a>
+</nav>
+
+<div class="container" id="apps-container">
+    <!-- Apps will be dynamically inserted here -->
+</div>
+
+<div class="container content-form" id="content-form" style="display: none;">
+    <h2>Publish Your App</h2>
+    <form onsubmit="publishContent(event)">
+        <label for="content-title">App Title</label>
+        <input type="text" id="content-title" name="content-title" placeholder="Enter your app title" required>
+
+        <label for="content-apk">Upload APK</label>
+        <input type="file" id="content-apk" name="content-apk" class="content-cover" accept=".apk" required>
+
+        <label for="content-cover">App Logo</label>
+        <input type="file" id="content-cover" name="content-cover" class="content-cover" accept="image/*" required>
+
+        <label for="content-body">App Description</label>
+        <textarea id="content-body" name="content-body" rows="5" placeholder="Write your app description here..." required></textarea>
+
+        <button type="submit">Publish</button>
+    </form>
+</div>
+
+<footer>
+    &copy; 2024 Your App Store Name
+</footer>
+
+<script>
+    function showApps() {
+        document.getElementById('apps-container').style.display = 'block';
+        document.getElementById('content-form').style.display = 'none';
+        displayApps();
+    }
+
+    function showContentForm() {
+        document.getElementById('apps-container').style.display = 'none';
+        document.getElementById('content-form').style.display = 'block';
+    }
+
+    function getApps() {
+        return JSON.parse(localStorage.getItem('apps')) || [];
+    }
+
+    function saveApp(app) {
+        const apps = getApps();
+        apps.push(app);
+        localStorage.setItem('apps', JSON.stringify(apps));
+    }
+
+    function displayApps() {
+        const apps = getApps();
+        const appsContainer = document.getElementById('apps-container');
+        appsContainer.innerHTML = '';
+
+        if (apps.length === 0) {
+            const noAppsMessage = document.createElement('p');
+            noAppsMessage.textContent = 'No apps available.';
+            appsContainer.appendChild(noAppsMessage);
+        } else {
+            const appList = document.createElement('ul');
+            appList.className = 'app-list';
+
+            apps.forEach((app, index) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'app-list-item';
+
+                const appLogo = document.createElement('img');
+                appLogo.src = app.logo;
+                appLogo.alt = `${app.title} Logo`;
+
+                const appDetails = document.createElement('div');
+                appDetails.className = 'app-details';
+
+                const appTitle = document.createElement('h2');
+                appTitle.textContent = app.title;
+
+                const appDescription = document.createElement('p');
+                appDescription.textContent = app.description;
+
+                const appDownloadLink = document.createElement('a');
+                appDownloadLink.href = app.apk;
+                appDownloadLink.textContent = 'Download';
+                appDownloadLink.className = 'app-download-link';
+                appDownloadLink.download = app.apkName;
+
+                appDetails.appendChild(appTitle);
+                appDetails.appendChild(appDescription);
+                appDetails.appendChild(appDownloadLink);
+
+                listItem.appendChild(appLogo);
+                listItem.appendChild(appDetails);
+
+                appList.appendChild(listItem);
+            });
+
+            appsContainer.appendChild(appList);
+        }
+    }
+
+    function publishContent(event) {
+        event.preventDefault();
+        const title = document.getElementById('content-title').value;
+        const apkInput = document.getElementById('content-apk');
+        const logoInput = document.getElementById('content-cover');
+        const description = document.getElementById('content-body').value;
+
+        const apkFile = apkInput.files[0];
+        const logoFile = logoInput.files[0];
+
+        const reader = new FileReader();
+
+        reader.onloadend = function() {
+            const apk = reader.result;
+            reader.onloadend = function() {
+                const logo = reader.result;
+                const app = { 
+                    title, 
+                    description, 
+                    logo, 
+                    apk, 
+                    apkName: apkFile.name 
+                };
+                saveApp(app);
+                showApps();
+            };
+            if (logoFile) {
+                reader.readAsDataURL(logoFile);
+            }
+        };
+
+        if (apkFile) {
+            reader.readAsDataURL(apkFile);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        showApps();
+    });
+</script>
+
+</body>
+</html>
