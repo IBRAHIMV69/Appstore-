@@ -158,8 +158,8 @@
         <label for="content-title">App Title</label>
         <input type="text" id="content-title" name="content-title" placeholder="Enter your app title" required>
 
-        <label for="content-apk">Upload APK</label>
-        <input type="file" id="content-apk" name="content-apk" class="content-cover" accept=".apk" required>
+        <label for="content-url">App URL</label>
+        <input type="url" id="content-url" name="content-url" placeholder="Enter your app URL" required>
 
         <label for="content-cover">App Logo</label>
         <input type="file" id="content-cover" name="content-cover" class="content-cover" accept="image/*" required>
@@ -228,10 +228,10 @@
                 appDescription.textContent = app.description;
 
                 const appDownloadLink = document.createElement('a');
-                appDownloadLink.href = app.apk;
+                appDownloadLink.href = app.url;
                 appDownloadLink.textContent = 'Download';
                 appDownloadLink.className = 'app-download-link';
-                appDownloadLink.download = app.apkName;
+                appDownloadLink.target = '_blank';
 
                 appDetails.appendChild(appTitle);
                 appDetails.appendChild(appDescription);
@@ -250,36 +250,20 @@
     function publishContent(event) {
         event.preventDefault();
         const title = document.getElementById('content-title').value;
-        const apkInput = document.getElementById('content-apk');
-        const logoInput = document.getElementById('content-cover');
+        const url = document.getElementById('content-url').value;
         const description = document.getElementById('content-body').value;
-
-        const apkFile = apkInput.files[0];
+        const logoInput = document.getElementById('content-cover');
         const logoFile = logoInput.files[0];
 
         const reader = new FileReader();
-
         reader.onloadend = function() {
-            const apk = reader.result;
-            reader.onloadend = function() {
-                const logo = reader.result;
-                const app = { 
-                    title, 
-                    description, 
-                    logo, 
-                    apk, 
-                    apkName: apkFile.name 
-                };
-                saveApp(app);
-                showApps();
-            };
-            if (logoFile) {
-                reader.readAsDataURL(logoFile);
-            }
+            const logo = reader.result;
+            const app = { title, description, logo, url };
+            saveApp(app);
+            showApps();
         };
-
-        if (apkFile) {
-            reader.readAsDataURL(apkFile);
+        if (logoFile) {
+            reader.readAsDataURL(logoFile);
         }
     }
 
