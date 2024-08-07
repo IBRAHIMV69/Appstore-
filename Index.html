@@ -71,6 +71,7 @@
             width: 70px;
             height: 70px;
             object-fit: cover;
+            border-radius: 50%;
             margin-right: 20px;
         }
         .app-details {
@@ -192,12 +193,12 @@
 
     function saveApp(app) {
         const apps = getApps();
-        apps.unshift(app);
+        apps.push(app);
         localStorage.setItem('apps', JSON.stringify(apps));
     }
 
     function displayApps() {
-        const apps = getApps();
+        const apps = getApps().reverse(); // Reverse the order of apps
         const appsContainer = document.getElementById('apps-container');
         appsContainer.innerHTML = '';
 
