@@ -231,7 +231,7 @@
                 appDownloadLink.href = app.apk;
                 appDownloadLink.textContent = 'Download';
                 appDownloadLink.className = 'app-download-link';
-                appDownloadLink.download = app.title;
+                appDownloadLink.download = `${app.title}.apk`;
                 appDownloadLink.target = '_blank';
 
                 appDetails.appendChild(appTitle);
@@ -257,20 +257,20 @@
         const apkInput = document.getElementById('content-apk');
         const apkFile = apkInput.files[0];
 
-        const reader = new FileReader();
-        reader.onloadend = function() {
-            const logo = reader.result;
-            const apkReader = new FileReader();
-            apkReader.onloadend = function() {
-                const apk = apkReader.result;
-                const app = { title, description, logo, apk };
-                saveApp(app);
-                showApps();
+        if (logoFile && apkFile) {
+            const logoReader = new FileReader();
+            logoReader.onloadend = function() {
+                const logo = logoReader.result;
+                const apkReader = new FileReader();
+                apkReader.onloadend = function() {
+                    const apk = apkReader.result;
+                    const app = { title, description, logo, apk };
+                    saveApp(app);
+                    showApps();
+                };
+                apkReader.readAsDataURL(apkFile);
             };
-            apkReader.readAsDataURL(apkFile);
-        };
-        if (logoFile) {
-            reader.readAsDataURL(logoFile);
+            logoReader.readAsDataURL(logoFile);
         }
     }
 
