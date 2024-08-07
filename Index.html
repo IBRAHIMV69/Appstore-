@@ -167,6 +167,9 @@
         <label for="content-body">App Description</label>
         <textarea id="content-body" name="content-body" rows="5" placeholder="Write your app description here..." required></textarea>
 
+        <label for="publish-password">Password</label>
+        <input type="password" id="publish-password" name="publish-password" placeholder="Enter password to publish" required>
+
         <button type="submit">Publish</button>
     </form>
 </div>
@@ -253,6 +256,14 @@
         const apkInput = document.getElementById('content-apk');
         const logoInput = document.getElementById('content-cover');
         const description = document.getElementById('content-body').value;
+        const password = document.getElementById('publish-password').value;
+
+        const correctPassword = 'your_password_here'; // Replace with your desired password
+
+        if (password !== correctPassword) {
+            alert('Incorrect password. Please try again.');
+            return;
+        }
 
         const apkFile = apkInput.files[0];
         const logoFile = logoInput.files[0];
